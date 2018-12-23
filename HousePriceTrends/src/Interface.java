@@ -1,5 +1,7 @@
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -15,25 +17,33 @@ public class Interface {
 		GridBagConstraints constraints = new GridBagConstraints();
 		
 		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.ipady =100;
+		constraints.ipady =10;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 4;
 		frame.add(textArea, constraints);
-		
-		constraints.ipady = 0;
+
+		constraints.fill = GridBagConstraints.VERTICAL;
+		constraints.ipadx = 0;
 		constraints.gridx = 0;
 		constraints.gridy = 1;
+		constraints.gridwidth = 4;
+		frame.add(textField, constraints);
+	
+		constraints.fill = GridBagConstraints.VERTICAL;
+		constraints.ipady = 0;
+		constraints.gridx = 3;
+		constraints.gridy = 2;
 		constraints.gridwidth = 1;
+		constraints.anchor = GridBagConstraints.PAGE_END;
 		frame.add(button, constraints);
 		
-		constraints.fill = GridBagConstraints.VERTICAL;
-		constraints.ipadx = 60;
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.gridwidth = 3;
-		constraints.anchor = GridBagConstraints.PAGE_END;
-		frame.add(textField, constraints);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				String path = textField.getText();
+				session.setDatabasePath(path);
+			}
+		});
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
