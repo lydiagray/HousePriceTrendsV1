@@ -16,17 +16,21 @@ public class Controller {
 		// Create the object class for each run
 		// Set the user input as the url property on button click
 		// Create mock search screen
-		SessionQuery session = new SessionQuery();
-		Interface.welcomeFrame();
-		Connection connection = null;
-		
-		try {
-			connection = DriverManager.getConnection(session.getDatabasePath());
-			System.out.println("It worked");
-		}
-		
-		catch(SQLException sqlex) {
-			sqlex.printStackTrace();
-		}
+//		SessionQuery session = new SessionQuery();
+//		Interface.welcomeFrame();
+//		Connection connection = null;
+//		
+//		try {
+//			connection = DriverManager.getConnection(session.getDatabasePath());
+//			System.out.println("It worked");
+//		}
+//		
+//		catch(SQLException sqlex) {
+//			sqlex.printStackTrace();
+//		}
+		Filepath filepath = new Filepath();
+		do {
+		System.out.println(filepath.getFilepath());
+		} while (filepath.getFilepath().length() == 0);
 	}
 }
