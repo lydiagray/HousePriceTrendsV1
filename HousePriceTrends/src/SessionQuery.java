@@ -41,6 +41,11 @@ public class SessionQuery extends JFrame implements ActionListener{
 		columnHeaders.add("Sale Date");
 		columnHeaders.add("Postcode");
 		columnHeaders.add("House Number/Name");
+		columnHeaders.add("Street");
+		columnHeaders.add("Locality");
+		columnHeaders.add("Town");
+		columnHeaders.add("District");
+		columnHeaders.add("County");
 		
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,6 +54,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 		setLocation(300,200);
 		
 		panel1.setLayout(new GridLayout(0, 1));
+		panel2.setLayout(new BorderLayout());
 		
 		panel1.add(instructions);
 		panel1.add(postcodeField);
@@ -73,12 +79,13 @@ public class SessionQuery extends JFrame implements ActionListener{
 			JTable table = new JTable(populateModel(results));
 			JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			
-			panel2.add(scrollPane);
-			panel2.add(newSearch);
+			panel2.add(scrollPane, BorderLayout.CENTER);
+			panel2.add(newSearch, BorderLayout.NORTH);
 			add(panel2, BorderLayout.SOUTH);
 			panel1.remove(search);
 
-			setSize(700, 650);
+			setSize(1100, 650);
+			panel2.setSize(1000,400);
 			revalidate();
 			repaint();
 		}
@@ -95,7 +102,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 				Vector<Object> vector = new Vector<Object>();
 				
 				for(int column = 1; column <= 16; column++) {
-					if(column == 2 || column == 3 || column == 4) {
+					if(column == 2 || column == 4 || (column >= 10 && column <= 14)) {
 						vector.add(results.getObject(column));
 					}
 					else if(column == 8) {
@@ -107,6 +114,10 @@ public class SessionQuery extends JFrame implements ActionListener{
 							propIdentifier = results.getString("saon") + " " + results.getString("paon");
 							vector.add(propIdentifier);
 						}
+					}
+					else if(column == 3) {						
+						String shortDate = results.getString(3).substring(0, 10);
+						vector.add(shortDate);
 					}
 				}
 			updatedData.add(vector);
