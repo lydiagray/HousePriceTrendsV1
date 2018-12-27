@@ -19,14 +19,14 @@ public class Controller {
 		// Create mock search screen
 //		String filepath;
 		
-		JFrame frame = new JFrame("House prices");
+		final JFrame frame = new JFrame("House prices");
 		
-		JTextArea textArea = new JTextArea("Enter the filepath for the database you want to use eg. C:/Documents/mydatabase");
-		JTextField textField = new JTextField(40);
+		JTextArea textArea = new JTextArea("Enter the filepath for the database you want to use eg. C:/Documents/mydatabase.db");
+		final JTextField textField = new JTextField(40);
 		JButton loadButton = new JButton("Load");
 		
 		frame.setLayout(new FlowLayout());
-		frame.setSize(700,350);
+		frame.setSize(700,150);
 		frame.setLocation(300,300);
 		
 		frame.add(textArea);
