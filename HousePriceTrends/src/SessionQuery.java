@@ -14,7 +14,6 @@ public class SessionQuery extends JFrame implements ActionListener{
 	private Connection connection = null;
 	
 	private Vector<String> columnHeaders = new Vector<>();
-//	private Vector<Vector<Object>> data = new Vector<Vector<Object>>();
 	
 	private String filepath;
 	private JTextArea instructions = new JTextArea("Please input the postcode you would like to search for. You must enter a minimum of 4 characters eg. SY16 or SY16 4BN", 2, 1);
@@ -22,8 +21,8 @@ public class SessionQuery extends JFrame implements ActionListener{
 	private JButton newSearch = new JButton(new AbstractAction("New search") {
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			panel2.removeAll();
-			panel1.add(search);
+			remove(panel2);
+			add(panel1);
 			postcodeField.setText("");
 			setSize(700,150);
 			revalidate();
@@ -60,6 +59,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 		panel1.add(postcodeField);
 		panel1.add(search);
 		add(panel1, BorderLayout.NORTH);
+		postcodeField.requestFocusInWindow();
 		
 		search.addActionListener(this);
 		
@@ -81,8 +81,9 @@ public class SessionQuery extends JFrame implements ActionListener{
 			
 			panel2.add(scrollPane, BorderLayout.CENTER);
 			panel2.add(newSearch, BorderLayout.NORTH);
-			add(panel2, BorderLayout.SOUTH);
-			panel1.remove(search);
+			remove(panel1);
+			add(panel2, BorderLayout.NORTH);
+
 
 			setSize(1100, 650);
 			panel2.setSize(1000,400);
