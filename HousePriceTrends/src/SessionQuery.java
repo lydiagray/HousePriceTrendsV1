@@ -14,11 +14,13 @@ import org.sqlite.*;
 @SuppressWarnings("serial")
 public class SessionQuery extends JFrame implements ActionListener{
 	private Connection connection = null;
+	private Font header = new Font("Arial", Font.BOLD, 16);
 	
 	private Vector<String> columnHeaders = new Vector<>();
 	
 	private String filepath;
-	private JTextArea instructions = new JTextArea("Please input the postcode you would like to search for. You must enter a minimum of 4 characters eg. SY16 or SY16 4BN", 2, 1);
+	private JTextArea instructions = new JTextArea("Please input the postcode you would like to search for. You must enter a minimum of 1 characters eg. S, SY16 or SY16 4BN", 2, 1);
+	private JTextField postcodeField = new JTextField(30);
 	private JButton search = new JButton("Search");
 	private JButton newSearch = new JButton(new AbstractAction("New search") {
 		@Override
@@ -31,7 +33,11 @@ public class SessionQuery extends JFrame implements ActionListener{
 			repaint();
 		}
 	});
-	private JTextField postcodeField = new JTextField(8);
+	
+	private GridBagConstraints panel1Constraints = new GridBagConstraints();
+	private GridBagConstraints panel2ConstraintsSearch = new GridBagConstraints();
+	private GridBagConstraints panel2ConstraintsTable = new GridBagConstraints();
+
 	private JPanel panel1 = new JPanel();
 	private JPanel panel2 = new JPanel();
 	
@@ -51,17 +57,48 @@ public class SessionQuery extends JFrame implements ActionListener{
 		
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		setSize(700,150);
+		setLayout(new FlowLayout());
+		setSize(1200,150);
 		setLocation(300,200);
 		
-		panel1.setLayout(new GridLayout(0, 1));
-		panel2.setLayout(new BorderLayout());
+		panel1.setLayout(new GridBagLayout());
+		panel2.setLayout(new GridBagLayout());
 		
-		panel1.add(instructions);
-		panel1.add(postcodeField);
-		panel1.add(search);
-		add(panel1, BorderLayout.NORTH);
+		panel1Constraints.fill = GridBagConstraints.NONE;
+		panel1Constraints.gridx = 0;
+		panel1Constraints.gridy = 0;
+		panel1Constraints.gridwidth = 4;
+		instructions.setSize(700, 25);
+		instructions.setMargin(new Insets(10,10,10,10));
+		instructions.setFont(header);
+		panel1.add(instructions, panel1Constraints);
+		
+		panel1Constraints.ipady =10;
+		panel1Constraints.gridx = 0;
+		panel1Constraints.gridy = 1;
+		panel1Constraints.gridwidth = 2;
+		postcodeField.setSize(350, 40);
+		panel1.add(postcodeField, panel1Constraints);
+		
+		panel1Constraints.ipady =10;
+		panel1Constraints.gridx = 2;
+		panel1Constraints.gridy = 1;
+		panel1Constraints.gridwidth = 2;
+		panel1Constraints.anchor = GridBagConstraints.PAGE_END;
+		search.setSize(350, 40);
+		panel1.add(search, panel1Constraints);
+		
+		panel2ConstraintsSearch.fill = GridBagConstraints.NONE;
+		panel2ConstraintsSearch.gridx = 2;
+		panel2ConstraintsSearch.gridy = 0;
+		panel2ConstraintsSearch.gridwidth = 1;
+		
+		panel2ConstraintsTable.gridx = 0;
+		panel2ConstraintsTable.gridy = 1;
+		panel2ConstraintsTable.gridwidth = 5;
+		panel2ConstraintsTable.anchor = GridBagConstraints.PAGE_END;
+		
+		add(panel1);
 		postcodeField.requestFocusInWindow();
 		postcodeField.getDocument().addDocumentListener(textListener);
 		
@@ -90,12 +127,14 @@ public class SessionQuery extends JFrame implements ActionListener{
 			table.moveColumn(8, 6);
 			table.moveColumn(8, 7);
 			
+			table.setSize(1000, 400);
+			
 			JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			
-			panel2.add(scrollPane, BorderLayout.CENTER);
-			panel2.add(newSearch, BorderLayout.NORTH);
+			panel2.add(scrollPane, panel2ConstraintsTable);
+			panel2.add(newSearch, panel2ConstraintsSearch);
 			remove(panel1);
-			add(panel2, BorderLayout.NORTH);
+			add(panel2);
 
 
 			setSize(1100, 650);
