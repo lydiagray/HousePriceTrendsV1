@@ -2,3 +2,7 @@
 /SessionQuery$2.class
 /Controller$1.class
 /Filepath.class
+/DocumentListener.class
+/SessionQuery$TextListener.class
+/TextListener.class
+/Filepath$TextListener.class

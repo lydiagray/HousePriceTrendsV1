@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.sqlite.*;
@@ -35,6 +37,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 	
 	public SessionQuery(String _filepath) {
 		filepath = _filepath;
+		DocumentListener textListener = new TextListener();
 		
 		columnHeaders.add("Sale Price (£)");
 		columnHeaders.add("Sale Date");
@@ -60,7 +63,9 @@ public class SessionQuery extends JFrame implements ActionListener{
 		panel1.add(search);
 		add(panel1, BorderLayout.NORTH);
 		postcodeField.requestFocusInWindow();
+		postcodeField.getDocument().addDocumentListener(textListener);
 		
+		search.setEnabled(false);
 		search.addActionListener(this);
 		
 		setVisible(true);
@@ -70,7 +75,6 @@ public class SessionQuery extends JFrame implements ActionListener{
 		try {
 			// connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
 			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
-			System.out.println("test");
 			String postcode = postcodeField.getText();
 			Statement statement = connection.createStatement();
 			String query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%';";
@@ -140,11 +144,25 @@ public class SessionQuery extends JFrame implements ActionListener{
 		return model;
 	}
 	
-//	public DefaultTableModel modifyTableForDisplay(DefaultTableModel model) {
-//		Vector<Vector<Object>> reorderedTable = new Vector<Vector<Object>>();
-//		for(int vector = 1; vector <= model.getRowCount(); vector++) {
-//			Vector<Object> newVector = new Vector<Object>();
-//			newVector.add(arg0)
-//		}
-//	}
+	public void checkFieldsNotEmpty() {
+		if(postcodeField.getText().isEmpty()) {
+			search.setEnabled(false);
+			return;
+		}
+		search.setEnabled(true);
+	}
+	
+	private class TextListener implements DocumentListener{
+		public void changedUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
+		
+		public void insertUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
+		
+		public void removeUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
+	}
 }

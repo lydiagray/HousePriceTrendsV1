@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +19,8 @@ public class Filepath extends JFrame implements ActionListener{
 		setLayout(new FlowLayout());
 		setSize(700,150);
 		setLocation(300,300);
+		
+		DocumentListener textListener = new TextListener();
 
 		instructions.setEditable(false);
 		filepathField.requestFocusInWindow();
@@ -24,7 +29,10 @@ public class Filepath extends JFrame implements ActionListener{
 		add(filepathField);
 		add(load);
 		
+		filepathField.getDocument().addDocumentListener(textListener);
+		
 		load.addActionListener(this);
+		load.setEnabled(false);
 		
 		setVisible(true);
 	}
@@ -32,5 +40,27 @@ public class Filepath extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent event) {
 		dispose();
 		new SessionQuery(filepath);
+	}
+	
+	public void checkFieldsNotEmpty() {
+		if(filepathField.getText().isEmpty()) {
+			load.setEnabled(false);
+			return;
+		}
+		load.setEnabled(true);
+	}
+	
+	private class TextListener implements DocumentListener{
+		public void changedUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
+		
+		public void insertUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
+		
+		public void removeUpdate(DocumentEvent event) {
+			checkFieldsNotEmpty();
+		}
 	}
 }
