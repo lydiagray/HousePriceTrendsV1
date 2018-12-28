@@ -77,6 +77,15 @@ public class SessionQuery extends JFrame implements ActionListener{
 			ResultSet results = statement.executeQuery(query);
 			
 			JTable table = new JTable(populateModel(results));
+			table.moveColumn(3, 0);
+			table.moveColumn(4, 1);
+			table.moveColumn(5, 2);
+			table.moveColumn(6, 3);
+			table.moveColumn(7, 4);
+			table.moveColumn(8, 5);
+			table.moveColumn(8, 6);
+			table.moveColumn(8, 7);
+			
 			JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			
 			panel2.add(scrollPane, BorderLayout.CENTER);
@@ -127,7 +136,15 @@ public class SessionQuery extends JFrame implements ActionListener{
 		catch (SQLException e) {
 			
 		}
-//		data = updatedData;
-		return new DefaultTableModel(updatedData, columnHeaders);
+		DefaultTableModel model = new DefaultTableModel(updatedData, columnHeaders);
+		return model;
 	}
+	
+//	public DefaultTableModel modifyTableForDisplay(DefaultTableModel model) {
+//		Vector<Vector<Object>> reorderedTable = new Vector<Vector<Object>>();
+//		for(int vector = 1; vector <= model.getRowCount(); vector++) {
+//			Vector<Object> newVector = new Vector<Object>();
+//			newVector.add(arg0)
+//		}
+//	}
 }
