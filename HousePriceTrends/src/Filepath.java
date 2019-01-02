@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public class Filepath extends JFrame implements ActionListener{
 	private String filepath;
 	private JTextField instructions = new JTextField("Enter the filepath for the database you want to use eg. C:/Documents/mydatabase.db");
-	private JTextField filepathField = new JTextField("", 40);
+	private JTextField filepathField = new JTextField("C:/code/HousePriceTrendsV2/month-house-prices.db", 40);
 	private JButton load = new JButton("Load");
 	
 	public Filepath() {
@@ -31,9 +31,10 @@ public class Filepath extends JFrame implements ActionListener{
 		add(load);
 		
 		filepathField.getDocument().addDocumentListener(textListener);
+
 		
 		load.addActionListener(this);
-		load.setEnabled(false);
+		checkFieldsNotEmpty();
 		
 		setVisible(true);
 	}

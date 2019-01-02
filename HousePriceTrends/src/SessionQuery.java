@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.*;
 import java.util.Vector;
 
@@ -19,7 +21,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 	
 	private String filepath;
 	private JTextField instructions = new JTextField("Please input the postcode you would like to search for. You must enter a minimum of 1 characters eg. S, SY16 or SY16 4BN");
-
+	private JCheckBox propertyTypeCheckbox = new JCheckBox("Exclude non-residential properties");
 	private JButton search = new JButton("Search");
 	private JButton newSearch = new JButton(new AbstractAction("New search") {
 		@Override
@@ -28,7 +30,8 @@ public class SessionQuery extends JFrame implements ActionListener{
 			remove(panel3);
 			add(panel1);
 			postcodeField.setText("");
-			setSize(900,170);
+			propertyTypeCheckbox.setSelected(false);
+			setSize(900,190);
 			revalidate();
 			repaint();
 		}
@@ -41,6 +44,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 	public SessionQuery(String _filepath) {
 		filepath = _filepath;
 		DocumentListener textListener = new TextListener();
+//		ItemListener checkboxListener = new CustomItemListener();
 		
 		columnHeaders.add("Sale Price (£)");
 		columnHeaders.add("Sale Date");
@@ -55,7 +59,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		setSize(900,170);
+		setSize(900,190);
 		setLocation(300,200);
 		
 		panel1.setLayout(new GridLayout(0,1,0,5));
@@ -66,12 +70,14 @@ public class SessionQuery extends JFrame implements ActionListener{
 		
 		panel1.add(instructions);
 		panel1.add(postcodeField);
+		panel1.add(propertyTypeCheckbox);
 		panel1.add(search);
 		panel1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		
 		add(panel1);
 		postcodeField.requestFocusInWindow();
 		postcodeField.getDocument().addDocumentListener(textListener);
+//		propertyTypeCheckbox.addItemListener(checkboxListener);
 		
 		search.setEnabled(false);
 		search.addActionListener(this);
@@ -84,8 +90,14 @@ public class SessionQuery extends JFrame implements ActionListener{
 			connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
 //			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
 			String postcode = postcodeField.getText();
+			String query;
+			if(propertyTypeCheckbox.isSelected()) {
+				query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%' AND prop_type <> 'O';";
+			}
+			else {
+				query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%';";
+			}
 			Statement statement = connection.createStatement();
-			String query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%';";
 			ResultSet results = statement.executeQuery(query);
 			
 			JTable table = new JTable(populateModel(results));
@@ -179,4 +191,21 @@ public class SessionQuery extends JFrame implements ActionListener{
 			checkFieldsNotEmpty();
 		}
 	}
+	
+//	private class CustomItemListener implements ItemListener{
+//		public void itemStateChanged(ItemEvent event) {
+//			if(event.getSource() == propertyTypeCheckbox) {
+//				excludeOtherPropertyTypes = setStateChange(event);
+//			}
+//		}
+//		
+//		public boolean setStateChange(ItemEvent event) {
+//			if(event.getStateChange() == 1) {
+//				return true;
+//			}
+//			else {
+//				return false;
+//			}
+//		}
+//	}
 }
