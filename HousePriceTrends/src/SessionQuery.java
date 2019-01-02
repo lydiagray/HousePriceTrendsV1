@@ -14,32 +14,29 @@ import org.sqlite.*;
 @SuppressWarnings("serial")
 public class SessionQuery extends JFrame implements ActionListener{
 	private Connection connection = null;
-	private Font header = new Font("Arial", Font.BOLD, 16);
 	
 	private Vector<String> columnHeaders = new Vector<>();
 	
 	private String filepath;
-	private JTextArea instructions = new JTextArea("Please input the postcode you would like to search for. You must enter a minimum of 1 characters eg. S, SY16 or SY16 4BN", 2, 1);
-	private JTextField postcodeField = new JTextField(30);
+	private JTextField instructions = new JTextField("Please input the postcode you would like to search for. You must enter a minimum of 1 characters eg. S, SY16 or SY16 4BN");
+
 	private JButton search = new JButton("Search");
 	private JButton newSearch = new JButton(new AbstractAction("New search") {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			remove(panel2);
+			remove(panel3);
 			add(panel1);
 			postcodeField.setText("");
-			setSize(700,150);
+			setSize(900,170);
 			revalidate();
 			repaint();
 		}
 	});
-	
-	private GridBagConstraints panel1Constraints = new GridBagConstraints();
-	private GridBagConstraints panel2ConstraintsSearch = new GridBagConstraints();
-	private GridBagConstraints panel2ConstraintsTable = new GridBagConstraints();
 
+	private JTextField postcodeField = new JTextField(30);
 	private JPanel panel1 = new JPanel();
-	private JPanel panel2 = new JPanel();
+	private JPanel panel2, panel3;
 	
 	public SessionQuery(String _filepath) {
 		filepath = _filepath;
@@ -57,46 +54,20 @@ public class SessionQuery extends JFrame implements ActionListener{
 		
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new FlowLayout());
-		setSize(1200,150);
+		setLayout(new BorderLayout());
+		setSize(900,170);
 		setLocation(300,200);
 		
-		panel1.setLayout(new GridBagLayout());
-		panel2.setLayout(new GridBagLayout());
+		panel1.setLayout(new GridLayout(0,1,0,5));
+		instructions.setEditable(false);
+		instructions.setHorizontalAlignment(JTextField.CENTER);
+		postcodeField.requestFocusInWindow();
+		postcodeField.setHorizontalAlignment(JTextField.CENTER);
 		
-		panel1Constraints.fill = GridBagConstraints.NONE;
-		panel1Constraints.gridx = 0;
-		panel1Constraints.gridy = 0;
-		panel1Constraints.gridwidth = 4;
-		instructions.setSize(700, 25);
-		instructions.setMargin(new Insets(10,10,10,10));
-		instructions.setFont(header);
-		panel1.add(instructions, panel1Constraints);
-		
-		panel1Constraints.ipady =10;
-		panel1Constraints.gridx = 0;
-		panel1Constraints.gridy = 1;
-		panel1Constraints.gridwidth = 2;
-		postcodeField.setSize(350, 40);
-		panel1.add(postcodeField, panel1Constraints);
-		
-		panel1Constraints.ipady =10;
-		panel1Constraints.gridx = 2;
-		panel1Constraints.gridy = 1;
-		panel1Constraints.gridwidth = 2;
-		panel1Constraints.anchor = GridBagConstraints.PAGE_END;
-		search.setSize(350, 40);
-		panel1.add(search, panel1Constraints);
-		
-		panel2ConstraintsSearch.fill = GridBagConstraints.NONE;
-		panel2ConstraintsSearch.gridx = 2;
-		panel2ConstraintsSearch.gridy = 0;
-		panel2ConstraintsSearch.gridwidth = 1;
-		
-		panel2ConstraintsTable.gridx = 0;
-		panel2ConstraintsTable.gridy = 1;
-		panel2ConstraintsTable.gridwidth = 5;
-		panel2ConstraintsTable.anchor = GridBagConstraints.PAGE_END;
+		panel1.add(instructions);
+		panel1.add(postcodeField);
+		panel1.add(search);
+		panel1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		
 		add(panel1);
 		postcodeField.requestFocusInWindow();
@@ -110,8 +81,8 @@ public class SessionQuery extends JFrame implements ActionListener{
 	
 	public void actionPerformed(ActionEvent event) {
 		try {
-			// connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
-			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
+			connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
+//			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
 			String postcode = postcodeField.getText();
 			Statement statement = connection.createStatement();
 			String query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%';";
@@ -127,18 +98,22 @@ public class SessionQuery extends JFrame implements ActionListener{
 			table.moveColumn(8, 6);
 			table.moveColumn(8, 7);
 			
-			table.setSize(1000, 400);
-			
 			JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			
-			panel2.add(scrollPane, panel2ConstraintsTable);
-			panel2.add(newSearch, panel2ConstraintsSearch);
+			panel2 = new JPanel();
+			panel2.setLayout(new FlowLayout());
+			panel2.add(newSearch);
+			
+			panel3 = new JPanel();
+			panel3.setLayout(new GridLayout(0,1));
+			panel3.add(scrollPane);
+			panel3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+			
 			remove(panel1);
-			add(panel2);
+			add(panel2, BorderLayout.NORTH);
+			add(panel3, BorderLayout.CENTER);
 
-
-			setSize(1100, 650);
-			panel2.setSize(1000,400);
+			setSize(1100, 450);
 			revalidate();
 			repaint();
 		}

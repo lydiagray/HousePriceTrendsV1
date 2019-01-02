@@ -9,20 +9,21 @@ import java.awt.event.ActionListener;
 @SuppressWarnings("serial")
 public class Filepath extends JFrame implements ActionListener{
 	private String filepath;
-	private JTextArea instructions = new JTextArea("Enter the filepath for the database you want to use eg. C:/Documents/mydatabase");
-	private JTextField filepathField = new JTextField("C:/code/HousePriceTrendsV1/month-house-prices.db", 40);
+	private JTextField instructions = new JTextField("Enter the filepath for the database you want to use eg. C:/Documents/mydatabase.db");
+	private JTextField filepathField = new JTextField("", 40);
 	private JButton load = new JButton("Load");
 	
 	public Filepath() {
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new FlowLayout());
-		setSize(700,150);
-		setLocation(300,300);
+		setSize(900,170);
+		setLocation(300,200);
 		
 		DocumentListener textListener = new TextListener();
 
 		instructions.setEditable(false);
+		instructions.setHorizontalAlignment(JTextField.CENTER);
 		filepathField.requestFocusInWindow();
 		
 		add(instructions);
@@ -38,6 +39,7 @@ public class Filepath extends JFrame implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent event) {
+		filepath = filepathField.getText();
 		dispose();
 		new SessionQuery(filepath);
 	}
