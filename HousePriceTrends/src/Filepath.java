@@ -14,6 +14,7 @@ public class Filepath extends JFrame implements ActionListener{
 	private JButton load = new JButton("Load");
 	
 	public Filepath() {
+		// Set basic layout structure
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new FlowLayout());
@@ -22,17 +23,15 @@ public class Filepath extends JFrame implements ActionListener{
 		
 		DocumentListener textListener = new TextListener();
 
+		// Set component layout settings and add to frame
 		instructions.setEditable(false);
 		instructions.setHorizontalAlignment(JTextField.CENTER);
-		filepathField.requestFocusInWindow();
-		
+		filepathField.requestFocusInWindow();		
 		add(instructions);
 		add(filepathField);
 		add(load);
 		
 		filepathField.getDocument().addDocumentListener(textListener);
-
-		
 		load.addActionListener(this);
 		checkFieldsNotEmpty();
 		

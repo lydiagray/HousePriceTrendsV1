@@ -20,7 +20,8 @@ public class SessionQuery extends JFrame implements ActionListener{
 	private Vector<String> columnHeaders = new Vector<>();
 	
 	private String filepath;
-	private JTextField instructions = new JTextField("Please input the postcode you would like to search for. You must enter a minimum of 1 characters eg. S, SY16 or SY16 4BN");
+	private JTextField instructions = new JTextField("Please input the postcode you would like to search for. You must enter a minimum of 1 character eg. S, SY16 or SY16 4BN");
+	private JTextField noResults = new JTextField("The postcode you entered did not return any results. Please check it and try again.");
 	private JCheckBox propertyTypeCheckbox = new JCheckBox("Exclude non-residential properties");
 	private JButton search = new JButton("Search");
 	private JButton newSearch = new JButton(new AbstractAction("New search") {
@@ -28,10 +29,11 @@ public class SessionQuery extends JFrame implements ActionListener{
 		public void actionPerformed(ActionEvent event) {
 			remove(panel2);
 			remove(panel3);
+			panel1.remove(noResults);
 			add(panel1);
 			postcodeField.setText("");
 			propertyTypeCheckbox.setSelected(false);
-			setSize(900,190);
+			setSize(900,210);
 			revalidate();
 			repaint();
 		}
@@ -44,7 +46,6 @@ public class SessionQuery extends JFrame implements ActionListener{
 	public SessionQuery(String _filepath) {
 		filepath = _filepath;
 		DocumentListener textListener = new TextListener();
-//		ItemListener checkboxListener = new CustomItemListener();
 		
 		columnHeaders.add("Sale Price (£)");
 		columnHeaders.add("Sale Date");
@@ -59,7 +60,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		setSize(900,190);
+		setSize(900,210);
 		setLocation(300,200);
 		
 		panel1.setLayout(new GridLayout(0,1,0,5));
@@ -77,7 +78,6 @@ public class SessionQuery extends JFrame implements ActionListener{
 		add(panel1);
 		postcodeField.requestFocusInWindow();
 		postcodeField.getDocument().addDocumentListener(textListener);
-//		propertyTypeCheckbox.addItemListener(checkboxListener);
 		
 		search.setEnabled(false);
 		search.addActionListener(this);
@@ -90,44 +90,51 @@ public class SessionQuery extends JFrame implements ActionListener{
 			connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
 //			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
 			String postcode = postcodeField.getText();
+			String sanitisedPostcode = postcode.replaceAll("[^a-zA-Z\\d\\s:]", "");
 			String query;
 			if(propertyTypeCheckbox.isSelected()) {
-				query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%' AND prop_type <> 'O';";
+				query = "SELECT * FROM sales WHERE postcode LIKE '" + sanitisedPostcode + "%' AND prop_type <> 'O';";
 			}
 			else {
-				query = "SELECT * FROM sales WHERE postcode LIKE '" + postcode + "%';";
+				query = "SELECT * FROM sales WHERE postcode LIKE '" + sanitisedPostcode + "%';";
 			}
 			Statement statement = connection.createStatement();
 			ResultSet results = statement.executeQuery(query);
 			
-			JTable table = new JTable(populateModel(results));
-			table.moveColumn(3, 0);
-			table.moveColumn(4, 1);
-			table.moveColumn(5, 2);
-			table.moveColumn(6, 3);
-			table.moveColumn(7, 4);
-			table.moveColumn(8, 5);
-			table.moveColumn(8, 6);
-			table.moveColumn(8, 7);
-			
-			JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			
-			panel2 = new JPanel();
-			panel2.setLayout(new FlowLayout());
-			panel2.add(newSearch);
-			
-			panel3 = new JPanel();
-			panel3.setLayout(new GridLayout(0,1));
-			panel3.add(scrollPane);
-			panel3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-			
-			remove(panel1);
-			add(panel2, BorderLayout.NORTH);
-			add(panel3, BorderLayout.CENTER);
+			if(results.next()) {
+				JTable table = new JTable(populateModel(results));
+				table.moveColumn(3, 0);
+				table.moveColumn(4, 1);
+				table.moveColumn(5, 2);
+				table.moveColumn(6, 3);
+				table.moveColumn(7, 4);
+				table.moveColumn(8, 5);
+				table.moveColumn(8, 6);
+				table.moveColumn(8, 7);
+				
+				JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				
+				panel2 = new JPanel();
+				panel2.setLayout(new FlowLayout());
+				panel2.add(newSearch);
+				
+				panel3 = new JPanel();
+				panel3.setLayout(new GridLayout(0,1));
+				panel3.add(scrollPane);
+				panel3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+				
+				remove(panel1);
+				add(panel2, BorderLayout.NORTH);
+				add(panel3, BorderLayout.CENTER);
 
-			setSize(1100, 450);
-			revalidate();
-			repaint();
+				setSize(1100, 450);
+				revalidate();
+				repaint();
+			}
+			else {
+				panel1.add(noResults);
+				setSize(900,230);
+			}		
 		}
 		catch(SQLException sqlex) {
 			sqlex.printStackTrace();
@@ -191,21 +198,4 @@ public class SessionQuery extends JFrame implements ActionListener{
 			checkFieldsNotEmpty();
 		}
 	}
-	
-//	private class CustomItemListener implements ItemListener{
-//		public void itemStateChanged(ItemEvent event) {
-//			if(event.getSource() == propertyTypeCheckbox) {
-//				excludeOtherPropertyTypes = setStateChange(event);
-//			}
-//		}
-//		
-//		public boolean setStateChange(ItemEvent event) {
-//			if(event.getStateChange() == 1) {
-//				return true;
-//			}
-//			else {
-//				return false;
-//			}
-//		}
-//	}
 }
