@@ -90,13 +90,13 @@ public class SessionQuery extends JFrame implements ActionListener{
 			connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
 //			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
 			String postcode = postcodeField.getText();
-			String sanitisedPostcode = postcode.replaceAll("[^a-zA-Z\\d\\s:]", "");
+			String sanitisedPostcode = postcode.replaceAll("[^a-zA-Z\\d:]", "");
 			String query;
 			if(propertyTypeCheckbox.isSelected()) {
-				query = "SELECT * FROM sales WHERE postcode LIKE '" + sanitisedPostcode + "%' AND prop_type <> 'O';";
+				query = "SELECT * FROM sales WHERE REPLACE(postcode, ' ', '') LIKE '" + sanitisedPostcode + "%' AND prop_type <> 'O';";
 			}
 			else {
-				query = "SELECT * FROM sales WHERE postcode LIKE '" + sanitisedPostcode + "%';";
+				query = "SELECT * FROM sales WHERE REPLACE(postcode, ' ', '') LIKE '" + sanitisedPostcode + "%';";
 			}
 			Statement statement = connection.createStatement();
 			ResultSet results = statement.executeQuery(query);
