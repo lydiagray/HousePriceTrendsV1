@@ -52,6 +52,13 @@ public class Filepath extends JFrame implements ActionListener{
 		load.setEnabled(true);
 	}
 	
+	public boolean checkFieldContainsSubstring(String filepath, String substring) {
+		if(filepath.toLowerCase().contains(substring)) {
+			return true;
+		}
+		return false;
+	}
+	
 	private class TextListener implements DocumentListener{
 		public void changedUpdate(DocumentEvent event) {
 			checkFieldsNotEmpty();
