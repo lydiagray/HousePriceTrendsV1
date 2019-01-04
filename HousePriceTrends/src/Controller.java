@@ -1,9 +1,16 @@
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
 public class Controller {	
 	public static void main(String[] args) {
-		// Create the object class for each run
-		// Set the user input as the url property on button click
-		// Create mock search screen
+		JFileChooser jfc = new JFileChooser();
 		
-		new Filepath();
+		int result = jfc.showOpenDialog(new JFrame());
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = jfc.getSelectedFile();
+			new SessionQuery(file.getAbsolutePath());
+		}
 	}
 }
