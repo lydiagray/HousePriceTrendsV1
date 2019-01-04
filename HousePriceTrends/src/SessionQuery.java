@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -17,7 +18,8 @@ import org.sqlite.*;
 public class SessionQuery extends JFrame implements ActionListener{
 	private Connection connection = null;
 	
-	private Vector<String> columnHeaders = new Vector<>();
+	private String[] columnHeadersArray = {"Sale Price (£)", "Sale Date", "Postcode", "House Number/Name", "Street", "Locality", "Town", "District", "County"};
+	private Vector<String> columnHeaders = new Vector<String>(Arrays.asList(columnHeadersArray));
 	
 	private String filepath;
 	private JTextField instructions = new JTextField("Please input the postcode you would like to search for. You must enter a minimum of 1 character eg. S, SY16 or SY16 4BN");
@@ -33,7 +35,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 			add(panel1);
 			postcodeField.setText("");
 			propertyTypeCheckbox.setSelected(false);
-			setSize(900,210);
+			setSize(1100,210);
 			revalidate();
 			repaint();
 		}
@@ -47,27 +49,22 @@ public class SessionQuery extends JFrame implements ActionListener{
 		filepath = _filepath;
 		DocumentListener textListener = new TextListener();
 		
-		columnHeaders.add("Sale Price (£)");
-		columnHeaders.add("Sale Date");
-		columnHeaders.add("Postcode");
-		columnHeaders.add("House Number/Name");
-		columnHeaders.add("Street");
-		columnHeaders.add("Locality");
-		columnHeaders.add("Town");
-		columnHeaders.add("District");
-		columnHeaders.add("County");
-		
 		setTitle("House prices");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
-		setSize(900,210);
-		setLocation(300,200);
+		setSize(1100,210);
+		setLocation(350,100);
 		
 		panel1.setLayout(new GridLayout(0,1,0,5));
+		
 		instructions.setEditable(false);
 		instructions.setHorizontalAlignment(JTextField.CENTER);
-		postcodeField.requestFocusInWindow();
 		postcodeField.setHorizontalAlignment(JTextField.CENTER);
+		search.setEnabled(false);
+		search.addActionListener(this);
+		noResults.setEditable(false);
+		noResults.setForeground(Color.red);
+		noResults.setHorizontalAlignment(JTextField.CENTER);
 		
 		panel1.add(instructions);
 		panel1.add(postcodeField);
@@ -76,19 +73,14 @@ public class SessionQuery extends JFrame implements ActionListener{
 		panel1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		
 		add(panel1);
-		postcodeField.requestFocusInWindow();
 		postcodeField.getDocument().addDocumentListener(textListener);
-		
-		search.setEnabled(false);
-		search.addActionListener(this);
-		
+	
 		setVisible(true);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
 		try {
 			connection = DriverManager.getConnection("jdbc:sqlite:" + filepath);
-//			connection = DriverManager.getConnection("jdbc:sqlite:C:/code/HousePriceTrendsV1/month-house-prices.db");
 			String postcode = postcodeField.getText();
 			String sanitisedPostcode = postcode.replaceAll("[^a-zA-Z\\d:]", "");
 			String query;
@@ -114,6 +106,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 				
 				JScrollPane scrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 				
+				remove(panel1);
 				panel2 = new JPanel();
 				panel2.setLayout(new FlowLayout());
 				panel2.add(newSearch);
@@ -123,17 +116,16 @@ public class SessionQuery extends JFrame implements ActionListener{
 				panel3.add(scrollPane);
 				panel3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 				
-				remove(panel1);
 				add(panel2, BorderLayout.NORTH);
 				add(panel3, BorderLayout.CENTER);
 
-				setSize(1100, 450);
+				setSize(1100, 850);
 				revalidate();
 				repaint();
 			}
 			else {
 				panel1.add(noResults);
-				setSize(900,230);
+				setSize(1100,250);
 			}		
 		}
 		catch(SQLException sqlex) {
@@ -147,7 +139,7 @@ public class SessionQuery extends JFrame implements ActionListener{
 			while (results.next()) {
 				
 				Vector<Object> vector = new Vector<Object>();
-				
+				// ToDo: Look at using enums
 				for(int column = 1; column <= 16; column++) {
 					if(column == 2 || column == 4 || (column >= 10 && column <= 14)) {
 						vector.add(results.getObject(column));
