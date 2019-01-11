@@ -1,1 +1,1 @@
-typeSearchIndex = [{"p":"<Unnamed>","l":"Controller"},{"p":"<Unnamed>","l":"SessionQuery"}]
+typeSearchIndex = [{"p":"<Unnamed>","l":"SessionQuery"}]
